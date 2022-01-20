@@ -3,9 +3,8 @@ from flask.logging import create_logger
 import logging
 
 import pandas as pd
-from sklearn import externals
-from sklearn import preprocessing
-#import sklearn as sl
+from sklearn.externals import joblib
+from sklearn.preprocessing import StandardScaler
 
 app = Flask(__name__)
 LOG = create_logger(app)
@@ -15,13 +14,13 @@ def scale(payload):
     """Scales Payload"""
     
     LOG.info(f"Scaling Payload: \n{payload}")
-    scaler = preprocessing.StandardScaler().fit(payload.astype(float))
+    scaler = StandardScaler().fit(payload.astype(float))
     scaled_adhoc_predict = scaler.transform(payload.astype(float))
     return scaled_adhoc_predict
 
 @app.route("/")
 def home():
-    html = '<h3>Sklearn Prediction Home</h3>'
+    html = "<h3>Sklearn Prediction Home</h3>"
     return html.format(format)
 
 @app.route("/predict", methods=['POST'])
@@ -69,5 +68,5 @@ def predict():
 
 if __name__ == "__main__":
     # load pretrained model as clf
-    clf = externals.joblib.load("./model_data/boston_housing_prediction.joblib")
+    clf = joblib.load("./model_data/boston_housing_prediction.joblib")
     app.run(host='0.0.0.0', port=80, debug=True) # specify port=80
